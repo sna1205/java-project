@@ -166,8 +166,18 @@ class Room {
         return customer != null;
     }
     public Customer getCustomer() {
+
         return customer;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
 
 }
 
@@ -235,20 +245,32 @@ class HotelManagementGUI {
         viewAllRoomsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Get the list of rooms or their details
-                ArrayList<String> roomDetailsList = hotel.getRoomDetailsList();
+                ArrayList<Room> allRooms = hotel.getRooms();
 
-                // Display the room details in a JOptionPane
-                StringBuilder roomDetails = new StringBuilder();
-                for (String details : roomDetailsList) {
-                    roomDetails.append(details).append("\n\n");
+                if (!allRooms.isEmpty()) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                    String[][] data = new String[allRooms.size()][4];
+                    int i = 0;
+
+                    for (Room room : allRooms) {
+                        data[i][0] = String.valueOf(room.getRoomNumber());
+                        data[i][1] = room.getType();
+                        data[i][2] = String.valueOf(room.getPrice());
+                        data[i][3] = room.isAvailable(new Date(), new Date()) ? "Available" : "Booked";
+
+                        i++;
+                    }
+
+                    String[] columnNames = {"Room Number", "Type", "Price", "Availability"};
+
+                    JTable table = new JTable(data, columnNames);
+                    JScrollPane scrollPane = new JScrollPane(table);
+
+                    JOptionPane.showMessageDialog(null, scrollPane, "All Rooms Information", JOptionPane.PLAIN_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "No rooms available.");
                 }
-
-                JTextArea textArea = new JTextArea(roomDetails.toString());
-                textArea.setEditable(false);
-                JScrollPane scrollPane = new JScrollPane(textArea);
-
-                JOptionPane.showMessageDialog(null, scrollPane, "All Rooms Details", JOptionPane.PLAIN_MESSAGE);
             }
         });
 
