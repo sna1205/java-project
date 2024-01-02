@@ -231,16 +231,29 @@ class HotelManagementGUI {
     private void createAndShowGUI() {
         JFrame frame = new JFrame("Hotel Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(420, 420);
 
-        JPanel panel = new JPanel();
+        JLabel text = new JLabel("Welcome To Booking System");
+
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 1000, 10));
+
         JButton addRoomButton = new JButton("Add Room");
         JButton removeRoomButton = new JButton("Remove Room");
         JButton checkAvailabilityButton = new JButton("Check Availability");
         JButton bookRoomButton = new JButton("Book Room");
         JButton checkOutButton = new JButton("Check Out");
-        JButton viewBookingButton = new JButton("View Booking");
         JButton viewAllRoomsButton = new JButton("View All Rooms");
+        JButton viewBookingButton = new JButton("View Booking Room");
+
+        Dimension buttonSize = new Dimension(150, 30);
+        addRoomButton.setPreferredSize(buttonSize);
+        removeRoomButton.setPreferredSize(buttonSize);
+        checkAvailabilityButton.setPreferredSize(buttonSize);
+        bookRoomButton.setPreferredSize(buttonSize);
+        checkOutButton.setPreferredSize(buttonSize);
+        viewAllRoomsButton.setPreferredSize(buttonSize);
+
+        inputPanel = new JPanel(new GridLayout(0, 2));
 
         viewAllRoomsButton.addActionListener(new ActionListener() {
             @Override
@@ -277,17 +290,33 @@ class HotelManagementGUI {
         addRoomButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Improved error handling for adding a room
-                try {
-                    int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number:"));
-                    String type = JOptionPane.showInputDialog("Enter Room Type:");
-                    double price = Double.parseDouble(JOptionPane.showInputDialog("Enter Room Price:"));
+                // Display input fields for adding a room
+                inputPanel.removeAll();
+                inputPanel.add(new JLabel("Room Number:"));
+                JTextField roomNumberField = new JTextField();
+                inputPanel.add(roomNumberField);
+                inputPanel.add(new JLabel("Room Type:"));
+                JTextField roomTypeField = new JTextField();
+                inputPanel.add(roomTypeField);
+                inputPanel.add(new JLabel("Room Price:"));
+                JTextField roomPriceField = new JTextField();
+                inputPanel.add(roomPriceField);
 
-                    Room newRoom = new Room(roomNumber, type, price);
-                    hotel.addRoom(newRoom);
-                    JOptionPane.showMessageDialog(null, "Room added successfully!");
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid input. Please enter valid numbers.");
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Enter Room Information", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number:"));
+                        String type = JOptionPane.showInputDialog("Enter Room Type:");
+                        double price = Double.parseDouble(JOptionPane.showInputDialog("Enter Room Price:"));
+
+                        Room newRoom = new Room(roomNumber, type, price);
+                        hotel.addRoom(newRoom);
+                        JOptionPane.showMessageDialog(null, "Room added successfully!");
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter valid numbers.");
+                    }
                 }
             }
         });
@@ -295,38 +324,68 @@ class HotelManagementGUI {
         removeRoomButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement logic for removing a room
-                int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number to remove:"));
-                Room roomToRemove = hotel.findRoomByNumber(roomNumber);
+                // Display input fields for removing a room
+                inputPanel.removeAll();
+                inputPanel.add(new JLabel("Room Number to remove:"));
+                JTextField roomNumberField = new JTextField();
+                inputPanel.add(roomNumberField);
 
-                if (roomToRemove != null) {
-                    hotel.removeRoom(roomToRemove);
-                    JOptionPane.showMessageDialog(null, "Room removed successfully!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Room not found!");
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Enter Room Information", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        int roomNumber = Integer.parseInt(roomNumberField.getText());
+                        Room roomToRemove = hotel.findRoomByNumber(roomNumber);
+
+                        if (roomToRemove != null) {
+                            hotel.removeRoom(roomToRemove);
+                            JOptionPane.showMessageDialog(null, "Room removed successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Room not found!");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter valid numbers.");
+                    }
                 }
             }
         });
 
-        checkAvailabilityButton.addActionListener(new ActionListener() {
+         checkAvailabilityButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement logic for checking room availability
-                int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number:"));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    Date startDate = dateFormat.parse(JOptionPane.showInputDialog("Enter Start Date (yyyy-MM-dd):"));
-                    Date endDate = dateFormat.parse(JOptionPane.showInputDialog("Enter End Date (yyyy-MM-dd):"));
+                // Display input fields for checking room availability
+                inputPanel.removeAll();
+                inputPanel.add(new JLabel("Enter Room Number:"));
+                JTextField roomNumberField = new JTextField();
+                inputPanel.add(roomNumberField);
+                inputPanel.add(new JLabel("Enter Start Date (yyyy-MM-dd):"));
+                JTextField startDateField = new JTextField();
+                inputPanel.add(startDateField);
+                inputPanel.add(new JLabel("Enter End Date (yyyy-MM-dd):"));
+                JTextField endDateField = new JTextField();
+                inputPanel.add(endDateField);
 
-                    boolean isAvailable = hotel.checkAvailability(roomNumber, startDate, endDate);
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Enter Room Information", JOptionPane.OK_CANCEL_OPTION);
 
-                    if (isAvailable) {
-                        JOptionPane.showMessageDialog(null, "Room is available for the given date range.");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Room is not available for the given date range.");
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        int roomNumber = Integer.parseInt(roomNumberField.getText());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date startDate = dateFormat.parse(startDateField.getText());
+                        Date endDate = dateFormat.parse(endDateField.getText());
+
+                        boolean isAvailable = hotel.checkAvailability(roomNumber, startDate, endDate);
+
+                        if (isAvailable) {
+                            JOptionPane.showMessageDialog(null, "Room is available for the given date range.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Room is not available for the given date range.");
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input or date format!");
                     }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid date format!");
                 }
             }
         });
@@ -334,22 +393,42 @@ class HotelManagementGUI {
         bookRoomButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement logic for booking a room
-                int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number:"));
-                String customerName = JOptionPane.showInputDialog("Enter Customer Name:");
-                String contactDetails = JOptionPane.showInputDialog("Enter Customer Contact Details:");
+                // Display input fields for booking a room
+                inputPanel.removeAll();
+                inputPanel.add(new JLabel("Enter Room Number:"));
+                JTextField roomNumberField = new JTextField();
+                inputPanel.add(roomNumberField);
+                inputPanel.add(new JLabel("Enter Customer Name:"));
+                JTextField customerNameField = new JTextField();
+                inputPanel.add(customerNameField);
+                inputPanel.add(new JLabel("Enter Customer Contact Details:"));
+                JTextField contactDetailsField = new JTextField();
+                inputPanel.add(contactDetailsField);
+                inputPanel.add(new JLabel("Enter Check-in Date (yyyy-MM-dd):"));
+                JTextField checkInDateField = new JTextField();
+                inputPanel.add(checkInDateField);
+                inputPanel.add(new JLabel("Enter Check-out Date (yyyy-MM-dd):"));
+                JTextField checkOutDateField = new JTextField();
+                inputPanel.add(checkOutDateField);
 
-                Customer customer = new Customer(customerName, contactDetails);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Enter Room Information", JOptionPane.OK_CANCEL_OPTION);
 
-                try {
-                    Date startDate = dateFormat.parse(JOptionPane.showInputDialog("Enter Check-in Date (yyyy-MM-dd):"));
-                    Date endDate = dateFormat.parse(JOptionPane.showInputDialog("Enter Check-out Date (yyyy-MM-dd):"));
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        int roomNumber = Integer.parseInt(roomNumberField.getText());
+                        String customerName = customerNameField.getText();
+                        String contactDetails = contactDetailsField.getText();
+                        Customer customer = new Customer(customerName, contactDetails);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        Date startDate = dateFormat.parse(checkInDateField.getText());
+                        Date endDate = dateFormat.parse(checkOutDateField.getText());
 
-                    hotel.bookRoom(roomNumber, customer, startDate, endDate);
-                    JOptionPane.showMessageDialog(null, "Room booked successfully!");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid date format!");
+                        hotel.bookRoom(roomNumber, customer, startDate, endDate);
+                        JOptionPane.showMessageDialog(null, "Room booked successfully!");
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input or date format!");
+                    }
                 }
             }
         });
@@ -357,12 +436,27 @@ class HotelManagementGUI {
         checkOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Implement logic for checking out
-                int roomNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter Room Number to check out:"));
-                hotel.checkOut(roomNumber);
-                JOptionPane.showMessageDialog(null, "Room checked out successfully!");
+                // Display input fields for checking out
+                inputPanel.removeAll();
+                inputPanel.add(new JLabel("Enter Room Number to check out:"));
+                JTextField roomNumberField = new JTextField();
+                inputPanel.add(roomNumberField);
+
+                int result = JOptionPane.showConfirmDialog(null, inputPanel,
+                        "Enter Room Information", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        int roomNumber = Integer.parseInt(roomNumberField.getText());
+                        hotel.checkOut(roomNumber);
+                        JOptionPane.showMessageDialog(null, "Room checked out successfully!");
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter valid numbers.");
+                    }
+                }
             }
         });
+        
         viewBookingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -406,6 +500,7 @@ class HotelManagementGUI {
             }
         });
 
+        panel.add(text);
         panel.add(viewAllRoomsButton);
         panel.add(viewBookingButton);
         panel.add(addRoomButton);
